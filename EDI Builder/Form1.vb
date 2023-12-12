@@ -20,7 +20,22 @@ Public Class Form1
         MsgBox("Finished")
 
     End Sub
+    Private Sub SetPageBreaks(ByVal sheet As Excel.Worksheet, ByVal interval As Integer)
+        ' Set page breaks on the specified sheet at the specified interval
+        Dim rowCount As Integer = sheet.UsedRange.Rows.Count
 
+        ' Clear existing horizontal page breaks
+        sheet.ResetAllPageBreaks()
+        sheet.PageSetup.PrintArea = ""
+
+        ' Set print area and add horizontal page breaks at the specified interval
+        For i As Integer = interval + 1 To rowCount Step interval
+            sheet.HPageBreaks.Add(sheet.Cells(i, 1))
+        Next
+
+        ' Set the print area to cover the entire used range
+        sheet.PageSetup.PrintArea = sheet.UsedRange.Address
+    End Sub
     Private Sub ParseCSV(ByVal theFileName As String)
 
         Dim outFileName As String = ""
@@ -39,6 +54,21 @@ Public Class Form1
             'MsgBox(outFileName)
             excelBook = excelApp.Workbooks.Open(outFileName)
             theSheet = CType(excelBook.Sheets(1), Microsoft.Office.Interop.Excel.Worksheet)
+
+            Dim beginningLineSet As String = txtBeginningLineSet.Text.Trim()
+            Dim thruDate As String = txtThruDate.Text.Trim()
+
+            ' Check If the user provided a value
+            If Not String.IsNullOrEmpty(beginningLineSet) Then
+                ' Delete rows before the specified "Begining LineSet" value
+                DeleteRowsAfterValue(theSheet, beginningLineSet, "B")
+            End If
+
+            ' Check if the user provided a value
+            If Not String.IsNullOrEmpty(thruDate) Then
+                ' Delete rows after the specified "Thru Date" value
+                DeleteRowsBeforeDate(theSheet, thruDate, "G")
+            End If
 
             theSheet.Range("A1:I1").EntireColumn.AutoFit()
             theSheet.Range("A:K").HorizontalAlignment = Excel.Constants.xlCenter
@@ -109,6 +139,7 @@ Public Class Form1
             sheet3.Range("A1:J1").EntireColumn.AutoFit()
             sheet3.Range("A:J").HorizontalAlignment = Excel.Constants.xlCenter
             sheet3.PageSetup.PrintTitleRows = "$1:$1"
+            SetPageBreaks(sheet3, 25)
 
 
             Dim sheet4 As Excel.Worksheet
@@ -129,6 +160,7 @@ Public Class Form1
             sheet4.Range("A1:J1").EntireColumn.AutoFit()
             sheet4.Range("A:J").HorizontalAlignment = Excel.Constants.xlCenter
             sheet4.PageSetup.PrintTitleRows = "$1:$1"
+            SetPageBreaks(sheet4, 15)
 
 
             Dim sheet5 As Excel.Worksheet
@@ -150,6 +182,7 @@ Public Class Form1
             sheet5.Range("A1:J1").EntireColumn.AutoFit()
             sheet5.Range("A:J").HorizontalAlignment = Excel.Constants.xlCenter
             sheet5.PageSetup.PrintTitleRows = "$1:$1"
+            SetPageBreaks(sheet5, 15)
 
             Dim sheet6 As Excel.Worksheet
             sheet6 = CType(excelBook.Worksheets.Add(After:=sheet5), Excel.Worksheet)
@@ -323,7 +356,12 @@ Public Class Form1
             End With
 
         Catch ex As Exception
-            MsgBox(ex.ToString)
+            ' Log the exception message and stack trace to the console
+            Console.WriteLine("Exception: " & ex.Message)
+            Console.WriteLine("Stack Trace: " & ex.StackTrace)
+
+            ' Display a message box with the exception details
+            MsgBox("An error occurred. Check the console for details.")
         Finally
             excelBook.SaveAs(outFileName.Replace("csv", "xlsx"), FileFormat:=Excel.XlFileFormat.xlOpenXMLWorkbook)
             'MAKE SURE TO KILL ALL INSTANCES BEFORE QUITING! if you fail to do this
@@ -342,6 +380,45 @@ Public Class Form1
         End Try
     End Sub
 
+    Private Sub DeleteRowsAfterValue(ByVal sheet As Excel.Worksheet, ByVal targetValue As String, ByVal column As String)
+        Dim usedRange As Excel.Range = sheet.UsedRange
+        Dim lastRow As Long = usedRange.Rows.Count
+
+        ' Start from the second row (row 2) since we want to keep the first row
+        For i As Long = 2 To lastRow
+            Dim cellValue As String = sheet.Range(column & i).Value
+
+            ' Compare the cell value with the target value
+            If String.Compare(cellValue, targetValue, StringComparison.OrdinalIgnoreCase) = 0 Then
+                ' Exit the loop when the target value is found
+                Exit For
+            Else
+                ' Delete the current row if the target value is not found yet
+                sheet.Rows(i).Delete()
+                ' Adjust the loop counter since the row has been deleted
+                i = i - 1
+                ' Adjust the last row count since a row has been deleted
+                lastRow = lastRow - 1
+            End If
+        Next
+    End Sub
+
+    Private Sub DeleteRowsBeforeDate(ByVal sheet As Excel.Worksheet, ByVal targetValue As String, ByVal column As String)
+        Dim usedRange As Excel.Range = sheet.UsedRange
+        Dim lastRow As Long = usedRange.Rows.Count
+        For i As Long = lastRow To 1 Step -1
+            Dim cellValue As String = sheet.Range(column & i).Value
+
+            ' Compare the cell value with the target value
+            If String.Compare(cellValue, targetValue, StringComparison.OrdinalIgnoreCase) = 0 Then
+                ' Exit the loop when the target value is found
+                Exit For
+            Else
+                ' Delete the current row if the target value is not found yet
+                sheet.Rows(i).Delete()
+            End If
+        Next
+    End Sub
     Private Function Cells(lngRow As Long, lngCol As Long) As Object
         Throw New NotImplementedException()
     End Function
