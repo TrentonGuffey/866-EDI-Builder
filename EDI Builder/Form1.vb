@@ -20,22 +20,6 @@ Public Class Form1
         MsgBox("Finished")
 
     End Sub
-    Private Sub SetPageBreaks(ByVal sheet As Excel.Worksheet, ByVal interval As Integer)
-        ' Set page breaks on the specified sheet at the specified interval
-        Dim rowCount As Integer = sheet.UsedRange.Rows.Count
-
-        ' Clear existing horizontal page breaks
-        sheet.ResetAllPageBreaks()
-        sheet.PageSetup.PrintArea = ""
-
-        ' Set print area and add horizontal page breaks at the specified interval
-        For i As Integer = interval + 1 To rowCount Step interval
-            sheet.HPageBreaks.Add(sheet.Cells(i, 1))
-        Next
-
-        ' Set the print area to cover the entire used range
-        sheet.PageSetup.PrintArea = sheet.UsedRange.Address
-    End Sub
     Private Sub ParseCSV(ByVal theFileName As String)
 
         Dim outFileName As String = ""
@@ -378,6 +362,22 @@ Public Class Form1
             GC.Collect()
             My.Computer.FileSystem.DeleteFile(outFileName)
         End Try
+    End Sub
+    Private Sub SetPageBreaks(ByVal sheet As Excel.Worksheet, ByVal interval As Integer)
+        ' Set page breaks on the specified sheet at the specified interval
+        Dim rowCount As Integer = sheet.UsedRange.Rows.Count
+
+        ' Clear existing horizontal page breaks
+        sheet.ResetAllPageBreaks()
+        sheet.PageSetup.PrintArea = ""
+
+        ' Set print area and add horizontal page breaks at the specified interval
+        For i As Integer = interval + 1 To rowCount Step interval
+            sheet.HPageBreaks.Add(sheet.Cells(i, 1))
+        Next
+
+        ' Set the print area to cover the entire used range
+        sheet.PageSetup.PrintArea = sheet.UsedRange.Address
     End Sub
 
     Private Sub DeleteRowsAfterValue(ByVal sheet As Excel.Worksheet, ByVal targetValue As String, ByVal column As String)
