@@ -1,24 +1,35 @@
 ﻿Imports Excel = Microsoft.Office.Interop.Excel
 Public Class Form1
     Private Sub BtnGo_Click(sender As Object, e As EventArgs) Handles btnGo.Click
-        Dim theFiles As New List(Of String)
-        Dim files() As String = IO.Directory.GetFiles(Application.StartupPath)
+        ' Change cursor to wait cursor
+        Cursor.Current = Cursors.WaitCursor
 
-        For Each file As String In files
+        Try
+            Dim theFiles As New List(Of String)
+            Dim files() As String = IO.Directory.GetFiles(Application.StartupPath)
 
-            'MsgBox(Mid(file, file.Length - 3, 4))
+            For Each file As String In files
+                ' MsgBox(Mid(file, file.Length - 3, 4))
 
-            If Mid(file, file.Length - 3, 4) = ".csv" Then
+                If Mid(file, file.Length - 3, 4) = ".csv" Then
+                    ParseCSV(file)
+                End If
+            Next
 
-                ParseCSV(file)
+            MsgBox("Finished")
 
-            End If
+        Catch ex As Exception
+            ' Handle exceptions here...
+            Console.WriteLine("Exception: " & ex.Message)
+            Console.WriteLine("Stack Trace: " & ex.StackTrace)
 
+            ' Display a message box with the exception details
+            MsgBox("An error occurred. Check the console for details.")
 
-        Next
-
-        MsgBox("Finished")
-
+        Finally
+            ' Revert cursor back to default cursor
+            Cursor.Current = Cursors.Default
+        End Try
     End Sub
     Private Sub ParseCSV(ByVal theFileName As String)
 
@@ -338,7 +349,7 @@ Public Class Form1
                 Next
             End With
             Dim lastRowSheet5 As Long = sheet5.UsedRange.Rows.Count
-            With sheet3
+            With sheet5
                 .Range("A2").Value = "1"
                 ' Apply the formula from A3 down to the last row
                 For rowNum As Integer = 3 To lastRowSheet5
@@ -390,22 +401,6 @@ Public Class Form1
             GC.Collect()
             My.Computer.FileSystem.DeleteFile(outFileName)
         End Try
-    End Sub
-    Private Sub SetPageBreaks(ByVal sheet As Excel.Worksheet, ByVal interval As Integer)
-        ' Set page breaks on the specified sheet at the specified interval
-        Dim rowCount As Integer = sheet.UsedRange.Rows.Count
-
-        ' Clear existing horizontal page breaks
-        sheet.ResetAllPageBreaks()
-        sheet.PageSetup.PrintArea = ""
-
-        ' Set print area and add horizontal page breaks at the specified interval
-        For i As Integer = interval + 1 To rowCount Step interval
-            sheet.HPageBreaks.Add(sheet.Cells(i, 1))
-        Next
-
-        ' Set the print area to cover the entire used range
-        sheet.PageSetup.PrintArea = sheet.UsedRange.Address
     End Sub
 
     Private Sub DeleteRowsAfterValue(ByVal sheet As Excel.Worksheet, ByVal targetValue As String, ByVal column As String)
