@@ -42,6 +42,14 @@ Public Class Form1
             Dim beginningLineSet As String = txtBeginningLineSet.Text.Trim()
             Dim thruDate As String = txtThruDate.Text.Trim()
 
+            Dim ngvRackSizeInput As String = txtNGVRackSize.Text.Trim()
+            Dim frontRackSizeInput As String = txtFrontRackSize.Text.Trim()
+            Dim rearRackSizeInput As String = txtRearRackSize.Text.Trim()
+
+            Dim ngvRackSize As Integer = If(String.IsNullOrEmpty(ngvRackSizeInput), 25, Integer.Parse(ngvRackSizeInput))
+            Dim frontRackSize As Integer = If(String.IsNullOrEmpty(frontRackSizeInput), 15, Integer.Parse(frontRackSizeInput))
+            Dim rearRackSize As Integer = If(String.IsNullOrEmpty(rearRackSizeInput), 15, Integer.Parse(rearRackSizeInput))
+
             ' Check If the user provided a value
             If Not String.IsNullOrEmpty(beginningLineSet) Then
                 ' Delete rows before the specified "Begining LineSet" value
@@ -123,7 +131,7 @@ Public Class Form1
             sheet3.Range("A1:J1").EntireColumn.AutoFit()
             sheet3.Range("A:J").HorizontalAlignment = Excel.Constants.xlCenter
             sheet3.PageSetup.PrintTitleRows = "$1:$1"
-            SetPageBreaks(sheet3, 25)
+            SetPageBreaks(sheet3, ngvRackSize)
 
 
             Dim sheet4 As Excel.Worksheet
@@ -144,7 +152,7 @@ Public Class Form1
             sheet4.Range("A1:J1").EntireColumn.AutoFit()
             sheet4.Range("A:J").HorizontalAlignment = Excel.Constants.xlCenter
             sheet4.PageSetup.PrintTitleRows = "$1:$1"
-            SetPageBreaks(sheet4, 15)
+            SetPageBreaks(sheet4, frontRackSize)
 
 
             Dim sheet5 As Excel.Worksheet
@@ -166,7 +174,7 @@ Public Class Form1
             sheet5.Range("A1:J1").EntireColumn.AutoFit()
             sheet5.Range("A:J").HorizontalAlignment = Excel.Constants.xlCenter
             sheet5.PageSetup.PrintTitleRows = "$1:$1"
-            SetPageBreaks(sheet5, 15)
+            SetPageBreaks(sheet5, rearRackSize)
 
             Dim sheet6 As Excel.Worksheet
             sheet6 = CType(excelBook.Worksheets.Add(After:=sheet5), Excel.Worksheet)
@@ -302,25 +310,45 @@ Public Class Form1
             sheet6.Range("A3").Value = "PN"
             sheet6.Range("B3").Value = "COUNT"
 
+            Dim lastRowSheet3 As Long = sheet3.UsedRange.Rows.Count
             With sheet3
                 .Range("A2").Value = "1"
-                .Range("A3").Formula = "=IF(A2=30,1,A2+1)"
+                ' Apply the formula from A3 down to the last row
+                For rowNum As Integer = 3 To lastRowSheet3
+                    .Range("A" & rowNum).Formula = "=IF(A" & rowNum - 1 & "=30,1,A" & rowNum - 1 & "+1)"
+                Next
                 .Range("J2").Value = "1"
-                .Range("J3").Formula = "=IF(A3=1,J2+1,J2)"
+                ' Apply the formula from J3 down to the last row
+                For rowNum As Integer = 3 To lastRowSheet3
+                    .Range("J" & rowNum).Formula = "=IF(A" & rowNum & "=1,J" & rowNum - 1 & "+1,J" & rowNum - 1 & ")"
+                Next
             End With
 
+            Dim lastRowSheet4 As Long = sheet4.UsedRange.Rows.Count
             With sheet4
                 .Range("A2").Value = "1"
+                ' Apply the formula from A3 down to the last row
+                For rowNum As Integer = 3 To lastRowSheet4
+                    .Range("A" & rowNum).Formula = "=IF(A" & rowNum - 1 & "=30,1,A" & rowNum - 1 & "+1)"
+                Next
                 .Range("J2").Value = "1"
-                .Range("J3").Formula = "=IF(A3=1,J2+1,J2)"
-                .Range("A3").Formula = "=IF(A2=25,1,A2+1)"
+                ' Apply the formula from J3 down to the last row
+                For rowNum As Integer = 3 To lastRowSheet4
+                    .Range("J" & rowNum).Formula = "=IF(A" & rowNum & "=1,J" & rowNum - 1 & "+1,J" & rowNum - 1 & ")"
+                Next
             End With
-
-            With sheet5
+            Dim lastRowSheet5 As Long = sheet5.UsedRange.Rows.Count
+            With sheet3
                 .Range("A2").Value = "1"
+                ' Apply the formula from A3 down to the last row
+                For rowNum As Integer = 3 To lastRowSheet5
+                    .Range("A" & rowNum).Formula = "=IF(A" & rowNum - 1 & "=30,1,A" & rowNum - 1 & "+1)"
+                Next
                 .Range("J2").Value = "1"
-                .Range("J3").Formula = "=IF(A3=1,J2+1,J2)"
-                .Range("A3").Formula = "=IF(A2=15,1,A2+1)"
+                ' Apply the formula from J3 down to the last row
+                For rowNum As Integer = 3 To lastRowSheet5
+                    .Range("J" & rowNum).Formula = "=IF(A" & rowNum & "=1,J" & rowNum - 1 & "+1,J" & rowNum - 1 & ")"
+                Next
             End With
 
             Dim lrow6 As Integer
@@ -401,6 +429,24 @@ Public Class Form1
                 lastRow = lastRow - 1
             End If
         Next
+    End Sub
+    Private Sub SetPageBreaks(ByVal sheet As Excel.Worksheet, ByVal interval As Integer)
+        ' Set page breaks on the specified sheet at the specified interval
+        Dim rowCount As Integer = sheet.UsedRange.Rows.Count
+
+        ' Clear existing horizontal page breaks
+        sheet.ResetAllPageBreaks()
+        sheet.PageSetup.PrintArea = ""
+
+        ' Set print area and add horizontal page breaks at the specified interval
+        If interval > 0 Then
+            For i As Integer = interval + 2 To rowCount Step interval
+                sheet.HPageBreaks.Add(sheet.Cells(i, 1))
+            Next
+        End If
+
+        ' Set the print area to cover the entire used range
+        sheet.PageSetup.PrintArea = sheet.UsedRange.Address
     End Sub
 
     Private Sub DeleteRowsBeforeDate(ByVal sheet As Excel.Worksheet, ByVal targetValue As String, ByVal column As String)
