@@ -30,6 +30,9 @@ Partial Class Form1
         Me.Label3 = New System.Windows.Forms.Label()
         Me.Label4 = New System.Windows.Forms.Label()
         Me.Label5 = New System.Windows.Forms.Label()
+        Me.txtNGVRackSize = New System.Windows.Forms.TextBox()
+        Me.txtFrontRackSize = New System.Windows.Forms.TextBox()
+        Me.txtRearRackSize = New System.Windows.Forms.TextBox()
         Me.SuspendLayout()
         '
         'btnGo
@@ -106,11 +109,35 @@ Partial Class Form1
         Me.Label5.TabIndex = 7
         Me.Label5.Text = "LT Rear Rack Size"
         '
+        'txtNGVRackSize
+        '
+        Me.txtNGVRackSize.Location = New System.Drawing.Point(222, 108)
+        Me.txtNGVRackSize.Name = "txtNGVRackSize"
+        Me.txtNGVRackSize.Size = New System.Drawing.Size(32, 20)
+        Me.txtNGVRackSize.TabIndex = 8
+        '
+        'txtFrontRackSize
+        '
+        Me.txtFrontRackSize.Location = New System.Drawing.Point(222, 145)
+        Me.txtFrontRackSize.Name = "txtFrontRackSize"
+        Me.txtFrontRackSize.Size = New System.Drawing.Size(32, 20)
+        Me.txtFrontRackSize.TabIndex = 9
+        '
+        'txtRearRackSize
+        '
+        Me.txtRearRackSize.Location = New System.Drawing.Point(222, 182)
+        Me.txtRearRackSize.Name = "txtRearRackSize"
+        Me.txtRearRackSize.Size = New System.Drawing.Size(32, 20)
+        Me.txtRearRackSize.TabIndex = 10
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(772, 300)
+        Me.Controls.Add(Me.txtRearRackSize)
+        Me.Controls.Add(Me.txtFrontRackSize)
+        Me.Controls.Add(Me.txtNGVRackSize)
         Me.Controls.Add(Me.Label5)
         Me.Controls.Add(Me.Label4)
         Me.Controls.Add(Me.Label3)
@@ -135,4 +162,7 @@ Partial Class Form1
     Friend WithEvents Label3 As Label
     Friend WithEvents Label4 As Label
     Friend WithEvents Label5 As Label
+    Friend WithEvents txtNGVRackSize As TextBox
+    Friend WithEvents txtFrontRackSize As TextBox
+    Friend WithEvents txtRearRackSize As TextBox
 End Class
