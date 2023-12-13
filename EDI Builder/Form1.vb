@@ -322,45 +322,50 @@ Public Class Form1
             sheet6.Range("B3").Value = "COUNT"
 
             Dim lastRowSheet3 As Long = sheet3.UsedRange.Rows.Count
+            'Dim lastRowSheet3 As Long = sheet3.Cells(sheet3.Rows.Count, "B").End(Excel.XlDirection.xlUp).Row
             With sheet3
                 .Range("A2").Value = "1"
                 ' Apply the formula from A3 down to the last row
-                For rowNum As Integer = 3 To lastRowSheet3
-                    .Range("A" & rowNum).Formula = "=IF(A" & rowNum - 1 & "=30,1,A" & rowNum - 1 & "+1)"
+                For rowNum As Integer = 3 To lastRowSheet3 - 1
+                    .Range("A" & rowNum).Formula = "=IF(A" & rowNum - 1 & "=" & ngvRackSize & ",1,A" & rowNum - 1 & "+1)"
                 Next
                 .Range("J2").Value = "1"
                 ' Apply the formula from J3 down to the last row
-                For rowNum As Integer = 3 To lastRowSheet3
+                For rowNum As Integer = 3 To lastRowSheet3 - 1
                     .Range("J" & rowNum).Formula = "=IF(A" & rowNum & "=1,J" & rowNum - 1 & "+1,J" & rowNum - 1 & ")"
                 Next
             End With
+            Dim valueInLastRowSheet3 As Integer = CInt(sheet3.Cells(lastRowSheet3, "J").Value)
 
             Dim lastRowSheet4 As Long = sheet4.UsedRange.Rows.Count
             With sheet4
                 .Range("A2").Value = "1"
                 ' Apply the formula from A3 down to the last row
-                For rowNum As Integer = 3 To lastRowSheet4
-                    .Range("A" & rowNum).Formula = "=IF(A" & rowNum - 1 & "=30,1,A" & rowNum - 1 & "+1)"
+                For rowNum As Integer = 3 To lastRowSheet4 - 1
+                    .Range("A" & rowNum).Formula = "=IF(A" & rowNum - 1 & "=" & frontRackSize & ",1,A" & rowNum - 1 & "+1)"
                 Next
                 .Range("J2").Value = "1"
                 ' Apply the formula from J3 down to the last row
-                For rowNum As Integer = 3 To lastRowSheet4
+                For rowNum As Integer = 3 To lastRowSheet4 - 1
                     .Range("J" & rowNum).Formula = "=IF(A" & rowNum & "=1,J" & rowNum - 1 & "+1,J" & rowNum - 1 & ")"
                 Next
             End With
+
             Dim lastRowSheet5 As Long = sheet5.UsedRange.Rows.Count
             With sheet5
                 .Range("A2").Value = "1"
                 ' Apply the formula from A3 down to the last row
-                For rowNum As Integer = 3 To lastRowSheet5
-                    .Range("A" & rowNum).Formula = "=IF(A" & rowNum - 1 & "=30,1,A" & rowNum - 1 & "+1)"
+                For rowNum As Integer = 3 To lastRowSheet5 - 1
+                    .Range("A" & rowNum).Formula = "=IF(A" & rowNum - 1 & "=" & rearRackSize & ",1,A" & rowNum - 1 & "+1)"
                 Next
                 .Range("J2").Value = "1"
                 ' Apply the formula from J3 down to the last row
-                For rowNum As Integer = 3 To lastRowSheet5
+                For rowNum As Integer = 3 To lastRowSheet5 - 1
                     .Range("J" & rowNum).Formula = "=IF(A" & rowNum & "=1,J" & rowNum - 1 & "+1,J" & rowNum - 1 & ")"
                 Next
             End With
+
+            Console.WriteLine(valueInLastRowSheet3)
 
             Dim lrow6 As Integer
             lrow6 = sheet6.UsedRange.Rows.Count
@@ -368,6 +373,7 @@ Public Class Form1
             With sheet6
                 .Range("A" & lrow6 + 2).Value = "TOTALS"
                 .Range("A" & lrow6 + 5).Value = "NGV RACKS"
+                .Range("B" & lrow6 + 5).Value = valueInLastRowSheet3
                 .Range("A" & lrow6 + 6).Value = "LT FRONT RACKS"
                 .Range("A" & lrow6 + 7).Value = "LT REAR RACKS"
                 .Range("A" & lrow6 + 9).Value = "LINE SET:"
