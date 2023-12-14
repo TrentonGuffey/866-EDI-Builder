@@ -367,7 +367,7 @@ Public Class Form1
             Dim valueInLastRowSheet5 As Integer = CInt(sheet5.Cells(lastRowSheet5, "J").Value)
 
             Dim lastRowtheSheet As Long = theSheet.UsedRange.Rows.Count
-            Dim endingLineSet As Integer = CInt(theSheet.Cells(lastRowtheSheet, "B").Value)
+            Dim endingLineSet As String = theSheet.Cells(lastRowtheSheet, "B").Value
 
             Dim lrow6 As Integer
             lrow6 = sheet6.UsedRange.Rows.Count
