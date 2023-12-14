@@ -33,6 +33,8 @@ Partial Class Form1
         Me.txtNGVRackSize = New System.Windows.Forms.TextBox()
         Me.txtFrontRackSize = New System.Windows.Forms.TextBox()
         Me.txtRearRackSize = New System.Windows.Forms.TextBox()
+        Me.Label6 = New System.Windows.Forms.Label()
+        Me.txtE79RackSize = New System.Windows.Forms.TextBox()
         Me.SuspendLayout()
         '
         'btnGo
@@ -85,9 +87,9 @@ Partial Class Form1
         Me.Label3.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.0!)
         Me.Label3.Location = New System.Drawing.Point(12, 107)
         Me.Label3.Name = "Label3"
-        Me.Label3.Size = New System.Drawing.Size(112, 18)
+        Me.Label3.Size = New System.Drawing.Size(116, 18)
         Me.Label3.TabIndex = 5
-        Me.Label3.Text = "NGV Rack Size"
+        Me.Label3.Text = "# of NGV Racks"
         '
         'Label4
         '
@@ -95,9 +97,9 @@ Partial Class Form1
         Me.Label4.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.0!)
         Me.Label4.Location = New System.Drawing.Point(12, 145)
         Me.Label4.Name = "Label4"
-        Me.Label4.Size = New System.Drawing.Size(136, 18)
+        Me.Label4.Size = New System.Drawing.Size(140, 18)
         Me.Label4.TabIndex = 6
-        Me.Label4.Text = "LT Front Rack Size"
+        Me.Label4.Text = "# of LT Front Racks"
         '
         'Label5
         '
@@ -105,9 +107,9 @@ Partial Class Form1
         Me.Label5.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.0!)
         Me.Label5.Location = New System.Drawing.Point(12, 181)
         Me.Label5.Name = "Label5"
-        Me.Label5.Size = New System.Drawing.Size(133, 18)
+        Me.Label5.Size = New System.Drawing.Size(137, 18)
         Me.Label5.TabIndex = 7
-        Me.Label5.Text = "LT Rear Rack Size"
+        Me.Label5.Text = "# of LT Rear Racks"
         '
         'txtNGVRackSize
         '
@@ -130,11 +132,30 @@ Partial Class Form1
         Me.txtRearRackSize.Size = New System.Drawing.Size(32, 20)
         Me.txtRearRackSize.TabIndex = 10
         '
+        'Label6
+        '
+        Me.Label6.AutoSize = True
+        Me.Label6.Font = New System.Drawing.Font("Microsoft Sans Serif", 11.0!)
+        Me.Label6.Location = New System.Drawing.Point(12, 217)
+        Me.Label6.Name = "Label6"
+        Me.Label6.Size = New System.Drawing.Size(110, 18)
+        Me.Label6.TabIndex = 11
+        Me.Label6.Text = "# of E79 Racks"
+        '
+        'txtE79RackSize
+        '
+        Me.txtE79RackSize.Location = New System.Drawing.Point(222, 218)
+        Me.txtE79RackSize.Name = "txtE79RackSize"
+        Me.txtE79RackSize.Size = New System.Drawing.Size(32, 20)
+        Me.txtE79RackSize.TabIndex = 12
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(772, 300)
+        Me.Controls.Add(Me.txtE79RackSize)
+        Me.Controls.Add(Me.Label6)
         Me.Controls.Add(Me.txtRearRackSize)
         Me.Controls.Add(Me.txtFrontRackSize)
         Me.Controls.Add(Me.txtNGVRackSize)
@@ -165,4 +186,6 @@ Partial Class Form1
     Friend WithEvents txtNGVRackSize As TextBox
     Friend WithEvents txtFrontRackSize As TextBox
     Friend WithEvents txtRearRackSize As TextBox
+    Friend WithEvents Label6 As Label
+    Friend WithEvents txtE79RackSize As TextBox
 End Class

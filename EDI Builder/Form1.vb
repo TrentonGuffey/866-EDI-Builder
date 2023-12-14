@@ -56,10 +56,13 @@ Public Class Form1
             Dim ngvRackSizeInput As String = txtNGVRackSize.Text.Trim()
             Dim frontRackSizeInput As String = txtFrontRackSize.Text.Trim()
             Dim rearRackSizeInput As String = txtRearRackSize.Text.Trim()
+            Dim e79RackSizeInput As String = txtE79RackSize.Text.Trim()
 
-            Dim ngvRackSize As Integer = If(String.IsNullOrEmpty(ngvRackSizeInput), 25, Integer.Parse(ngvRackSizeInput))
-            Dim frontRackSize As Integer = If(String.IsNullOrEmpty(frontRackSizeInput), 15, Integer.Parse(frontRackSizeInput))
-            Dim rearRackSize As Integer = If(String.IsNullOrEmpty(rearRackSizeInput), 15, Integer.Parse(rearRackSizeInput))
+            Dim ngvRackSize As Integer = If(String.IsNullOrEmpty(ngvRackSizeInput), 35, Integer.Parse(ngvRackSizeInput))
+            Dim frontRackSize As Integer = If(String.IsNullOrEmpty(frontRackSizeInput), 25, Integer.Parse(frontRackSizeInput))
+            Dim rearRackSize As Integer = If(String.IsNullOrEmpty(rearRackSizeInput), 25, Integer.Parse(rearRackSizeInput))
+            Dim e79RackSize As Integer = If(String.IsNullOrEmpty(e79RackSizeInput), 25, Integer.Parse(e79RackSizeInput))
+
 
             ' Check If the user provided a value
             If Not String.IsNullOrEmpty(beginningLineSet) Then
@@ -131,7 +134,7 @@ Public Class Form1
                 .Range("J1").Value = "Rack"
             End With
             With range1
-                .AutoFilter(Field:=6, Criteria1:="NGV")
+                .AutoFilter(Field:=5, Criteria1:="7")
                 range1.Offset(1, 0).Copy()
                 sheet3.Range("B2").PasteSpecial()
                 If theSheet.AutoFilterMode = True Then
@@ -152,7 +155,7 @@ Public Class Form1
             sheet4.Paste()
 
             With range1
-                .AutoFilter(Field:=6, Criteria1:="LT FRONT")
+                .AutoFilter(Field:=5, Criteria1:="1")
                 range1.Offset(1, 0).Copy()
                 sheet4.Range("B2").PasteSpecial()
                 If theSheet.AutoFilterMode = True Then
@@ -173,7 +176,7 @@ Public Class Form1
             sheet5.Paste()
 
             With range1
-                .AutoFilter(Field:=6, Criteria1:="LT REAR")
+                .AutoFilter(Field:=5, Criteria1:="3")
                 range1.Offset(1, 0).Copy()
                 sheet5.Range("B2").PasteSpecial()
                 If theSheet.AutoFilterMode = True Then
@@ -191,6 +194,8 @@ Public Class Form1
             sheet6 = CType(excelBook.Worksheets.Add(After:=sheet5), Excel.Worksheet)
 
             sheet6.Name = "TOTALS"
+
+
 
             Dim theValue As String = "value"
             Dim incR As Integer = 1
@@ -223,6 +228,27 @@ Public Class Form1
                 .Orientation = Excel.XlPivotFieldOrientation.xlDataField
                 .Position = 1
             End With
+
+            Dim sheet7 As Excel.Worksheet
+            sheet7 = CType(excelBook.Worksheets.Add(After:=sheet6), Excel.Worksheet)
+            sheet7.Name = "E79"
+            sheet3.Range("A1:J1").Copy()
+            sheet7.Paste()
+
+            With range1
+                .AutoFilter(Field:=5, Criteria1:="9")
+                range1.Offset(1, 0).Copy()
+                sheet7.Range("B2").PasteSpecial()
+                If theSheet.AutoFilterMode = True Then
+                    theSheet.AutoFilterMode = False
+                End If
+            End With
+
+            sheet7.Range("A1:J1").EntireColumn.AutoFit()
+            sheet7.Range("A:J").HorizontalAlignment = Excel.Constants.xlCenter
+            sheet7.PageSetup.PrintTitleRows = "$1:$1"
+            SetPageBreaks(sheet7, e79RackSize)
+
 
             'Formatting the first Sheets header and margins
             With theSheet
@@ -366,6 +392,21 @@ Public Class Form1
             End With
             Dim valueInLastRowSheet5 As Integer = CInt(sheet5.Cells(lastRowSheet5, "J").Value)
 
+            Dim lastRowSheet7 As Long = sheet7.UsedRange.Rows.Count
+            With sheet7
+                .Range("A2").Value = "1"
+                ' Apply the formula from A3 down to the last row
+                For rowNum As Integer = 3 To lastRowSheet7
+                    .Range("A" & rowNum).Formula = "=IF(A" & rowNum - 1 & "=" & e79RackSize & ",1,A" & rowNum - 1 & "+1)"
+                Next
+                .Range("J2").Value = "1"
+                ' Apply the formula from J3 down to the last row
+                For rowNum As Integer = 3 To lastRowSheet7
+                    .Range("J" & rowNum).Formula = "=IF(A" & rowNum & "=1,J" & rowNum - 1 & "+1,J" & rowNum - 1 & ")"
+                Next
+            End With
+            Dim valueInLastRowSheet7 As Integer = CInt(sheet7.Cells(lastRowSheet7, "J").Value)
+
             Dim lastRowtheSheet As Long = theSheet.UsedRange.Rows.Count
             Dim endingLineSet As String = theSheet.Cells(lastRowtheSheet, "B").Value
 
@@ -380,12 +421,15 @@ Public Class Form1
                 .Range("B" & lrow6 + 6).Value = valueInLastRowSheet4
                 .Range("A" & lrow6 + 7).Value = "LT REAR RACKS"
                 .Range("B" & lrow6 + 7).Value = valueInLastRowSheet5
-                .Range("A" & lrow6 + 9).Value = "LINE SET:"
-                .Range("B" & lrow6 + 9).Value = beginningLineSet & "-" & endingLineSet
+                .Range("A" & lrow6 + 8).Value = "E79 RACKS"
+                .Range("B" & lrow6 + 8).Value = valueInLastRowSheet7
+                .Range("A" & lrow6 + 10).Value = "LINE SET:"
+                .Range("B" & lrow6 + 10).Value = beginningLineSet & "-" & endingLineSet
                 .Range("A" & lrow6 + 5).Font.Bold = True
                 .Range("A" & lrow6 + 6).Font.Bold = True
                 .Range("A" & lrow6 + 7).Font.Bold = True
-                .Range("A" & lrow6 + 9).Font.Bold = True
+                .Range("A" & lrow6 + 8).Font.Bold = True
+                .Range("A" & lrow6 + 10).Font.Bold = True
                 .Range("A1:B1").EntireColumn.AutoFit()
             End With
 
